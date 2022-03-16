@@ -3,21 +3,22 @@ var app = angular.module("Demo", ["ngRoute"])
         $routeProvider
             .when("/home", {
                 templateUrl: "Templates/home.html",
-                controller: "homeController"
+                controller: "homeController",
+                controllerAs:"homeCtrl"
             })
             .when("/courses", {
                 templateUrl: "Templates/courses.html",
-                controller: "coursesController"
+                controller: "coursesController as coursesCtrl"
             })
             .when("/students", {
                 templateUrl: "Templates/students.html",
-                controller: "studentsController"
+                controller: "studentsController as studentsCtrl"
             })
 
 
             .when("/students/:id", {
                 templateUrl: "Templates/studentDetails.html",
-                controller: "studentDetailsController"
+                controller: "studentDetailsController as studentDetailsCtrl"
             })
 
 
@@ -28,30 +29,31 @@ var app = angular.module("Demo", ["ngRoute"])
     })
 
 
-    .controller("homeController", function ($scope) {
-        $scope.message = "Home page";
+    .controller("homeController", function () {
+        this.message = "Home page";
 
     })
-    .controller("coursesController", function ($scope) {
+    .controller("coursesController", function () {
 
-        $scope.courses = ["C#", "AngularJS", "Java", "SQL Server", "ASP.NET"];
+        this.courses = ["C#", "AngularJS", "Java", "SQL Server", "ASP.NET"];
     })
-    .controller("studentsController", function ($scope, $http) {
+    .controller("studentsController", function ($http) {
+        var vm=this;
         $http.get("https://mysafeinfo.com/api/data?list=presidents&format=json&case=default")
             .then(function (response) {
-                $scope.students = response.data;
+                vm.students = response.data;
             })
     })
 
 
-    .controller("studentDetailsController", function ($scope, $http, $routeParams) {
-        
+    .controller("studentDetailsController", function ($http, $routeParams) {
+        var vm=this;
         $http({
             url: "https://mysafeinfo.com/api/data?list=presidents&format=json&case=default",
             method: "get",
             params: { ID: $routeParams.id }
         }).then(function (response) {
-            $scope.student = response.data[0];
+            vm.student = response.data[0];
             
         })
     })     
