@@ -30,10 +30,11 @@ var app = angular.module("Demo", ["ui.router"])
                     }
                 }
             })
-            .state("studentDetails", {
-                url: "/students/:id",
+            .state("student", {
+                url: "/student/{id:string}",
                 templateUrl: "Templates/studentDetails.html",
-                controller: "studentDetailsController as studentDetailsCtrl"
+                controller: "studentDetailsController",
+                controllerAs:"studentDetailsCtrl"
             })
 
             .state("studentsSearch", {
@@ -62,15 +63,16 @@ var app = angular.module("Demo", ["ui.router"])
     .controller("studentsController", function (studentslist, $state, $location) {
         var vm = this;
     
-        vm.studentSearch = function () {
-            $state.go("studentsSearch", { FullName: vm.name });
+        vm.studentSearch = function (d) {
+            $state.go("studentsSearch", { name: d });
+            console.log(d);
         }
         
-        vm.studentDetails = function () {
-            $state.go("studentsDetails", { ID: vm.id });
-            console.log("myFunction");
+        vm.studentDetails = function (f) {
+            console.log(f);
+            $state.go("student", { id: f });
         }
-
+        
         vm.reloadData = function () {
             $state.reload();
         }
@@ -83,10 +85,6 @@ var app = angular.module("Demo", ["ui.router"])
 
     .controller("studentDetailsController", function ($http, $stateParams) {
         var vm = this;
-
-        vm.oo = {
-            id: 'test'
-        }
 
         
         $http({

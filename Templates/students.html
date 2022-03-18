@@ -1,15 +1,18 @@
 <h1>Students</h1>
 
 Name : <input type="text" ng-model="vm.FullName">
-<button ng-click="vm.searchStudent()">Search</button>
+<button ng-click="vm.studentSearch(vm.FullName)">Search</button>
 <ul>
-     <li ng-repeat="student in vm.students">
-        <a href ng-click="vm.goto(student.ID)">
+    <li ng-repeat="student in vm.students">
+        <a style="cursor: pointer;" ng-click="vm.studentDetails(student.ID)">
             {{student.FullName}}
         </a>
-        
-    </li> 
-    
+
+    </li>
+
 </ul>
 
 <button ng-click="vm.reloadData()">Reload Data</button>
+
+
+<!--ng-click="vm.goto(student.ID)"-->
