@@ -4,7 +4,7 @@ Name : <input type="text" ng-model="vm.FullName">
 <button ng-click="vm.searchStudent()">Search</button>
 <ul>
      <li ng-repeat="student in vm.students">
-        <a href="students/{{student.ID}}">
+        <a href ng-click="vm.goto(student.ID)">
             {{student.FullName}}
         </a>
         

@@ -1,21 +1,24 @@
 <h1>Student Details</h1>
 
+
+
+
 <table style="border:1px solid black">
     <tr>
         <td>Id</td>
-        <td>{{studentDetailsCtrl.student.ID}}</td>
+        <td>{{studentDetailsCtrl.student[0].ID}}</td>
     </tr>
     <tr>
         <td>Name</td>
-        <td>{{studentDetailsCtrl.student.FullName}}</td>
+        <td>{{studentDetailsCtrl.student[0].FullName}}</td>
     </tr>
     <tr>
         <td>Gender</td>
-        <td>{{studentDetailsCtrl.student.Party}}</td>
+        <td>{{studentDetailsCtrl.student[0].Party}}</td>
     </tr>
     <tr>
         <td>City</td>
-        <td>{{studentDetailsCtrl.student.Terms}}</td>
+        <td>{{studentDetailsCtrl.student[0].Terms}}</td>
     </tr>
 </table>
- <h4><a href="students">Back to Students list</a></h4> 
+ <h4><a ui-sref="students">Back to Students list</a></h4> 

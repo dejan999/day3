@@ -1,44 +1,55 @@
-var app = angular.module("Demo", ["ngRoute"])
-    .config(function ($routeProvider, $locationProvider) {
+var app = angular.module("Demo", ["ui.router"])
+    .config(function ($stateProvider) {
 
-        $routeProvider.caseInsensitiveMatch = true;
+        //$routeProvider.caseInsensitiveMatch = true;
 
-        $routeProvider
-            .when("/home", {
-                template: "<h1>Template in action</h1>",
+        $stateProvider
+            .state("home", {
+                url: "/home",
+                templateUrl: "Templates/home.html",
                 controller: "homeController",
                 controllerAs: "homeCtrl"
             })
-            .when("/courses", {
+            .state("courses", {
+                url: "/courses",
                 templateUrl: "Templates/courses.html",
                 controller: "coursesController as coursesCtrl",
 
             })
-            .when("/students", {
+            .state("students", {
+                url: "/students",
                 templateUrl: "Templates/students.html",
                 controller: "studentsController",
-                controllerAs: "vm"
+                controllerAs: "vm",
+                resolve: {
+                    studentslist: function ($http) {
+                        return $http.get("https://mysafeinfo.com/api/data?list=presidents&format=json&case=default")
+                            .then(function (response) {
+                                return response.data;
+                            })
+                    }
+                }
             })
-
-
-            .when("/students/:id", {
+            .state("studentDetails", {
+                url: "/students/:id",
                 templateUrl: "Templates/studentDetails.html",
                 controller: "studentDetailsController as studentDetailsCtrl"
             })
-            .when("/studentsSearch/:name?", {
+
+            .state("studentsSearch", {
+                url: "/studentsSearch/:name",
                 templateUrl: "Templates/studentsSearch.html",
                 controller: "studentsSearchController",
                 controllerAs: "studentsSearchCtrl"
-            }) 
+            })
+            
+/*
+    .otherwise({
+         redirectTo: "/home"
+     })
+    $locationProvider.html5Mode(true);*/
 
-
-        /*.otherwise({
-             redirectTo: "/home"
-         })*/
-        $locationProvider.html5Mode(true);
     })
-
-
     .controller("homeController", function () {
         this.message = "Home page";
 
@@ -48,60 +59,62 @@ var app = angular.module("Demo", ["ngRoute"])
         this.courses = ["C#", "AngularJS", "Java", "SQL Server", "ASP.NET"];
     })
 
-    .controller("studentsController", function ($http, $route, $location) {
-        console.log('asd');
+    .controller("studentsController", function (studentslist, $state, $location) {
         var vm = this;
-
-        vm.searchStudent = function () {
-            if (vm.FullName) {
-                $location.url("/studentsSearch/" + vm.FullName);
-            }
-            else {
-                $location.url("/studentsSearch");
-            }
+    
+        vm.studentSearch = function () {
+            $state.go("studentsSearch", { FullName: vm.name });
         }
-
-
+        
+        vm.studentDetails = function () {
+            $state.go("studentsDetails", { ID: vm.id });
+            console.log("myFunction");
+        }
 
         vm.reloadData = function () {
-            $route.reload();
+            $state.reload();
         }
-        $http.get("https://mysafeinfo.com/api/data?list=presidents&format=json&case=default")
-            .then(function (response) {
-                vm.students = response.data;
-            })
+
+    
+        vm.students = studentslist;
     })
 
 
-    .controller("studentDetailsController", function ($http, $routeParams) {
+
+    .controller("studentDetailsController", function ($http, $stateParams) {
         var vm = this;
+
+        vm.oo = {
+            id: 'test'
+        }
+
+        
         $http({
             url: "https://mysafeinfo.com/api/data?list=presidents&format=json&case=default",
             method: "get",
-            params: { ID: $routeParams.id }
+            params: { ID: $stateParams.id }
         }).then(function (response) {
-            vm.student = response.data[0];
-
+            vm.student = response.data;
+            
         })
+
     })
-
-
-    .controller("studentsSearchController", function ($http, $routeParams) {
+    .controller("studentsSearchController", function ($http, $stateParams) {
         var vm = this;
-
-        if ($routeParams.name) {
+    
+        if ($stateParams.name) {
             $http({
                 url: "https://mysafeinfo.com/api/data?list=presidents&format=json&case=default",
                 method: "get",
-                params: { FullName: $routeParams.name }
+                params: { FullName: $stateParams.name }
             }).then(function (response) {
                 vm.students = response.data;
             })
         }
         else {
             $http.get("https://mysafeinfo.com/api/data?list=presidents&format=json&case=default")
-                .then(function (response) {
-                    vm.students = response.data;
-                })
+                        .then(function (response) {
+                            vm.students = response.data;
+                        })
         }
     })
